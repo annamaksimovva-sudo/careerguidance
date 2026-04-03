@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Навигатор карьеры</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue-dark:  #1A3A6B;
+    --blue-mid:   #1E6FBF;
+    --blue-light: #29ABE2;
+    --blue-pale:  #E8F4FD;
+    --blue-tag:   #D0E8F7;
+    --orange:     #F57C00;
+    --orange-pale:#FFF3E0;
+    --white:      #ffffff;
+    --text-dark:  #1a2a3a;
+    --text-mid:   #3a5068;
+    --text-light: #6a8aaa;
+    --border:     #ddeeff;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: linear-gradient(160deg, #0d2a52 0%, #1A3A6B 40%, #1E6FBF 100%);
+    min-height: 100vh;
+    padding: 48px 20px 80px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: 42px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(90deg, #63d0ff, #a8e6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .tracks-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 40px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .track-tab {
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.20);
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .track-tab:hover {
+    background: rgba(255,255,255,0.20);
+    border-color: rgba(255,255,255,0.40);
+    transform: translateY(-1px);
+  }
+
+  .track-tab.active {
+    background: #fff;
+    color: var(--blue-dark);
+    border-color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transform: translateY(-2px);
+  }
+
+  .track-section {
+    display: none;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .track-section.active {
+    display: block;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .track-heading {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: -0.3px;
+  }
+
+  .track-heading span {
+    opacity: 0.6;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-top: 4px;
+    letter-spacing: 0;
+  }
+
+  .accordion-item {
+    background: #fff;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(26,58,107,0.13);
+    transition: box-shadow 0.2s;
+  }
+
+  .accordion-item.open {
+    box-shadow: 0 6px 32px rgba(26,58,107,0.20);
+  }
+
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+
+  .accordion-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .acc-emoji {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--blue-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .accordion-item.open .acc-emoji {
+    background: var(--blue-tag);
+  }
+
+  .accordion-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+
+  .accordion-header .sub {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .accordion-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--blue-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--blue-mid);
+    transition: transform 0.3s, background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .accordion-item.open .accordion-icon {
+    transform: rotate(180deg);
+    background: var(--blue-mid);
+    color: #fff;
+  }
+
+  .accordion-body {
+    display: none;
+    padding: 0 22px 24px;
+  }
+
+  .accordion-item.open .accordion-body {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .divider-top {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 18px;
+  }
+
+  .illustration {
+    width: 100%;
+    height: 160px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+  }
+
+  .desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: var(--blue-pale);
+    border-radius: 10px;
+    border-left: 3px solid var(--blue-light);
+  }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 16px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--blue-light);
+    border-radius: 2px;
+  }
+
+  .section-label.plus-label::before {
+    background: var(--orange);
+  }
+
+  /* TASK LIST */
+  ul.task-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul.task-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #f8fbff;
+  }
+
+  ul.task-list li::before {
+    content: '→';
+    color: var(--blue-light);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  /* SKILLS LIST — новый стиль для расширенных блоков */
+  ul.skills-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul.skills-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--blue-pale);
+    border: 1px solid rgba(30,111,191,0.10);
+  }
+
+  ul.skills-list li::before {
+    content: '★';
+    color: var(--blue-mid);
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  ul.skills-list.plus li {
+    background: var(--orange-pale);
+    border-color: rgba(245,124,0,0.10);
+  }
+
+  ul.skills-list.plus li::before {
+    content: '✦';
+    color: var(--orange);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* COLORS */
+  .ill-analytics  { background: linear-gradient(135deg, #1E6FBF18, #29ABE238); }
+  .ill-manager    { background: linear-gradient(135deg, #FF6B6B18, #FF6B6B38); }
+  .ill-finance    { background: linear-gradient(135deg, #2ECC7118, #2ECC7138); }
+  .ill-marketing  { background: linear-gradient(135deg, #F39C1218, #F39C1238); }
+  .ill-strategy   { background: linear-gradient(135deg, #8E44AD18, #8E44AD38); }
+  .ill-consulting { background: linear-gradient(135deg, #16A08518, #16A08538); }
+  .ill-research   { background: linear-gradient(135deg, #2980B918, #2980B938); }
+  .ill-legal      { background: linear-gradient(135deg, #7F8C8D18, #7F8C8D38); }
+  .ill-hr         { background: linear-gradient(135deg, #E91E8C18, #E91E8C38); }
+  .ill-design     { background: linear-gradient(135deg, #FF572218, #FF572238); }
+  .ill-commerce   { background: linear-gradient(135deg, #00BCD418, #00BCD438); }
+
+  .footer {
+    text-align: center;
+    margin-top: 60px;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 28px; }
+    .track-tab { padding: 8px 14px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">🧭 Карьерный навигатор</div>
+  <h1>Найди <span>своё направление</span></h1>
+  <p>Изучи профессии, задачи и навыки — выбери трек, который подходит именно тебе</p>
+</div>
+
+<div class="tracks-nav">
+  <button class="track-tab active" onclick="showTrack('analytics', this)">📊 Аналитика</button>
+  <button class="track-tab"        onclick="showTrack('manager', this)">🗂 Менеджмент</button>
+  <button class="track-tab"        onclick="showTrack('finance', this)">💰 Финансы</button>
+  <button class="track-tab"        onclick="showTrack('marketing', this)">📣 Маркетинг</button>
+  <button class="track-tab"        onclick="showTrack('strategy', this)">♟ Стратегия</button>
+  <button class="track-tab"        onclick="showTrack('consulting', this)">💼 Консалтинг</button>
+  <button class="track-tab"        onclick="showTrack('research', this)">🔬 Исследования</button>
+  <button class="track-tab"        onclick="showTrack('legal', this)">⚖️ Юристы</button>
+  <button class="track-tab"        onclick="showTrack('hr', this)">🤝 HR</button>
+  <button class="track-tab"        onclick="showTrack('design', this)">🎨 Дизайн</button>
+  <button class="track-tab"        onclick="showTrack('commerce', this)">🛒 Коммерция</button>
+</div>
+
+
+<!-- ===================== АНАЛИТИКА ===================== -->
+<div class="track-section active" id="track-analytics">
+  <div class="track-heading">Трек «Аналитика»<span>4 профессии · от Excel до Python и Data Engineering</span></div>
+
+  <!-- Бизнес-аналитик -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📋</div>
+        <div><h3>Бизнес-аналитик</h3><div class="sub">Процессы · Excel · SQL · ТЗ</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-analytics">📋</div>
+      <p class="desc">Одно из самых широких направлений. Такой специалист не только анализирует цифры, но и смотрит на бизнес-процессы в целом, работая со смежными командами над их улучшением. Python здесь обычно не нужен 🙂</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Считать экономическое обоснование проектов и оценивать их эффективность</li>
+        <li>Вести базы знаний команды в Confluence</li>
+        <li>Собирать требования от заказчиков и составлять ТЗ смежным командам</li>
+        <li>Моделировать бизнес-процессы «as is» и «to be» в нотациях</li>
+        <li>Анализировать и визуализировать данные, делать отчёты</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Хорошо знать Excel: ВПР, условные формулы (ЕСЛИ, СЧЁТЕСЛИ, СУММЕСЛИ), сводные таблицы</li>
+        <li>Уметь визуализировать данные и презентовать их в PowerPoint — строить понятные слайды, графики, таблицы</li>
+        <li>Знать основы SQL: стандартные SELECT-запросы, фильтрация (WHERE), джойны (JOIN), группировка (GROUP BY)</li>
+        <li>Уметь описывать и структурировать бизнес-требования: писать ТЗ, user stories, acceptance criteria</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знакомство с инструментами моделирования бизнес-процессов: Business Studio, MS Visio, Aris, нотации BPMN и EPC</li>
+        <li>Знать принципы работы Tableau или PowerBI для визуализации и анализа процессов</li>
+        <li>Участие в кейс-чемпионатах, олимпиадах или научных конференциях — покажет умение решать нестандартные задачи</li>
+        <li>Опыт работы в Confluence, Jira или аналогах для ведения документации</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Продуктовый аналитик -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🚀</div>
+        <div><h3>Продуктовый аналитик</h3><div class="sub">A/B-тесты · Python · Метрики продукта</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-analytics">🚀</div>
+      <p class="desc">Помогает продуктовым командам принимать решения на основе данных: исследует поведение пользователей, строит воронки и проверяет гипотезы через A/B-тесты.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Строить воронки конверсии и выявлять узкие места в продукте</li>
+        <li>Проектировать и анализировать A/B-эксперименты</li>
+        <li>Разрабатывать продуктовые метрики (DAU, Retention, LTV)</li>
+        <li>Готовить дашборды для продуктовых команд</li>
+        <li>Проводить когортный и сегментационный анализ пользователей</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно знать SQL: оконные функции (ROW_NUMBER, LAG, LEAD), агрегации, подзапросы, работа с большими таблицами</li>
+        <li>Знать базовый Python: библиотеки Pandas для работы с данными, NumPy для вычислений</li>
+        <li>Понимать основы статистики: t-тест, p-value, доверительные интервалы, размер выборки для A/B-тестов</li>
+        <li>Знать продуктовые метрики: DAU/MAU, Retention, Churn, LTV, ARPU, конверсия по воронке</li>
+        <li>Уметь строить понятные презентации и дашборды для нетехнической аудитории</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с Tableau или PowerBI: построение интерактивных дашбордов и фильтров</li>
+        <li>Продвинутые библиотеки Python: Matplotlib и Seaborn для визуализации, Scipy для статистики</li>
+        <li>Понимание продуктового мышления: фреймворки AARRR, HEART, Jobs To Be Done</li>
+        <li>Участие в кейс-чемпионатах или хакатонах по анализу данных</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Дата-аналитик -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📊</div>
+        <div><h3>Дата-аналитик</h3><div class="sub">Big Data · SQL · Python · Визуализация</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-analytics">📊</div>
+      <p class="desc">Работает с большими объёмами данных: строит отчёты, находит закономерности и помогает бизнесу принимать решения, основанные на фактах, а не на интуиции.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Прогнозировать показатели компании с помощью статистических моделей</li>
+        <li>Проводить разведочный анализ данных (EDA)</li>
+        <li>Строить и поддерживать аналитические дашборды</li>
+        <li>Анализировать большие объёмы данных в Vertica / ClickHouse</li>
+        <li>Автоматизировать рутинные отчёты с помощью Python</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать SQL: оконные функции, CTE (WITH-запросы), работа с Vertica и ClickHouse, оптимизация запросов</li>
+        <li>Знать Python на уровне уверенного использования: Pandas, NumPy, автоматизация отчётов, работа с API</li>
+        <li>Уметь визуализировать данные: Matplotlib, Seaborn, а также строить дашборды в Tableau или PowerBI</li>
+        <li>Знать Excel на продвинутом уровне, включая OLAP-кубы и сложные формулы массивов</li>
+        <li>Понимать основы статистики: описательная статистика, корреляция, регрессия, проверка гипотез</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знакомство с основами машинного обучения: линейная регрессия, классификация, кластеризация (scikit-learn)</li>
+        <li>Опыт работы с облачными платформами: Yandex Cloud, BigQuery, Spark</li>
+        <li>Участие в соревнованиях на Kaggle или хакатонах по Data Science</li>
+        <li>Знание основ Git для версионирования кода и совместной работы</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Дата-инженер -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">⚙️</div>
+        <div><h3>Дата-инженер</h3><div class="sub">ETL · Пайплайны · SQL · Python</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-analytics">⚙️</div>
+      <p class="desc">Строит инфраструктуру данных: пайплайны, хранилища, ETL-процессы. Без дата-инженера аналитики не смогут получить нужные данные в нужном виде и в нужное время.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать и поддерживать ETL/ELT-пайплайны</li>
+        <li>Проектировать схемы хранилища данных (DWH)</li>
+        <li>Обеспечивать качество и консистентность данных</li>
+        <li>Оптимизировать производительность SQL-запросов</li>
+        <li>Автоматизировать процессы загрузки и трансформации данных</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать SQL: сложные запросы, оптимизация, работа с партиционированием, индексами в ClickHouse и Vertica</li>
+        <li>Знать Python на продвинутом уровне: написание ETL-скриптов, работа с pandas, sqlalchemy, requests</li>
+        <li>Понимать архитектуру хранилищ данных: понятия DWH, Data Lake, Data Mart, слои staging/ods/dds/dm</li>
+        <li>Знать основы Linux: навигация, bash-скрипты, работа с cron для планирования задач</li>
+        <li>Уметь работать с Git: ветки, pull request'ы, code review</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт с Apache Airflow: создание DAG'ов, операторы, мониторинг пайплайнов</li>
+        <li>Знакомство с Apache Spark или Kafka для потоковой обработки данных</li>
+        <li>Базовые знания Docker и контейнеризации для деплоя пайплайнов</li>
+        <li>Понимание принципов dbt (data build tool) для трансформации данных</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== МЕНЕДЖМЕНТ ===================== -->
+<div class="track-section" id="track-manager">
+  <div class="track-heading">Трек «Менеджмент»<span>2 профессии · Продукт и Проект</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🚀</div>
+        <div><h3>Менеджер продукта</h3><div class="sub">CJM · CustDev · A/B-тесты · Roadmap</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-manager">🚀</div>
+      <p class="desc">Продакту нужно думать как пользователь, искать новые решения и брать за них ответственность. Это одна из самых востребованных ролей в технологических компаниях.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Исследовать пользователей через Customer Journey Map и находить узкие места</li>
+        <li>Проводить Customer Development — глубинные интервью с пользователями</li>
+        <li>Описывать требования к продукту: user stories, acceptance criteria, PRD</li>
+        <li>Проверять продуктовые гипотезы через A/B-тесты</li>
+        <li>Анализировать рынок, конкурентов и проводить бенчмаркинг</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, условные формулы, сводные таблицы — для быстрого анализа данных</li>
+        <li>Уметь визуализировать данные и строить убедительные презентации в PowerPoint</li>
+        <li>Понимать продуктовые метрики: DAU, MAU, Retention, конверсия, LTV, NPS</li>
+        <li>Уметь работать с инструментами для прототипирования и описания процессов: Miro, Figma (базово), Notion</li>
+        <li>Иметь навыки структурированного мышления: приоритизация задач (RICE, MoSCoW), работа с бэклогом</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Понимание принципов разработки: что такое API, фронтенд/бэкенд, спринты, как ставить задачи разработчикам</li>
+        <li>Базовый SQL для самостоятельного получения данных без помощи аналитика</li>
+        <li>Участие в кейс-чемпионатах по продукту или хакатонах</li>
+        <li>Дополнительное обучение: курсы по Product Management (ProductStar, Яндекс Практикум и др.)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🗓️</div>
+        <div><h3>Менеджер проекта</h3><div class="sub">Roadmap · ТЗ · Jira · Переговоры</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-manager">🗓️</div>
+      <p class="desc">Проджект — это лидер, который любит решать проблемы, находит общий язык с людьми и несёт ответственность за выполнение проекта в срок и в рамках бюджета.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Планировать проект: декомпозиция на этапы, задачи, сроки и бюджет</li>
+        <li>Составлять ТЗ для всех участников и следить за выполнением</li>
+        <li>Разрабатывать дорожную карту проекта (Roadmap, Gantt)</li>
+        <li>Управлять рисками и эскалировать проблемы вовремя</li>
+        <li>Проводить переговоры с заказчиком и регулярные встречи команды</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, сводные таблицы, условные формулы — для ведения планов и отчётов</li>
+        <li>Уметь строить презентации в PowerPoint: статус-отчёты, защита проекта перед стейкхолдерами</li>
+        <li>Понимать методологии управления проектами: классический Waterfall и гибкий Agile/Scrum</li>
+        <li>Иметь навыки коммуникации и фасилитации: проведение встреч, работа с конфликтами, постановка задач</li>
+        <li>Уметь работать с рисками: идентификация, оценка вероятности, план митигации</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы в Jira, MS Project, Miro или Notion для управления задачами и документацией</li>
+        <li>Знание принципов бюджетирования проектов и расчёта ROI</li>
+        <li>Участие в кейс-чемпионатах или волонтёрских проектах в роли организатора</li>
+        <li>Сертификаты по PM: PMI CAPM, Prince2 Foundation или курсы на Coursera/Яндекс Практикум</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== ФИНАНСЫ ===================== -->
+<div class="track-section" id="track-finance">
+  <div class="track-heading">Трек «Финансы»<span>3 профессии · Аналитика, учёт и налоги</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📈</div>
+        <div><h3>Финансовый аналитик</h3><div class="sub">Модели · Бюджет · SQL · Сценарии</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-finance">📈</div>
+      <p class="desc">Создаёт точные финансовые модели и планы, на которые опирается топ-менеджмент при принятии стратегических решений.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Планировать и прогнозировать финансовые показатели компании</li>
+        <li>Готовить и дорабатывать модели бюджетного планирования</li>
+        <li>Анализировать отклонения фактических значений от бюджетных (план-факт)</li>
+        <li>Разрабатывать сценарии развития бизнеса для топ-менеджмента</li>
+        <li>Придумывать методы оптимизации процессов планирования</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Отлично знать Excel: не только сводные таблицы и условные функции, но и OLAP-кубы, функции ИНДЕКС/ПОИСКПОЗ, финансовые функции (NPV, IRR, PMT)</li>
+        <li>Уметь строить финансовые модели: P&L, Balance Sheet, Cash Flow, DCF-оценка</li>
+        <li>Хорошо знать SQL: агрегатные и оконные функции, работа с Vertica и ClickHouse для выгрузки данных</li>
+        <li>Иметь базовые знания экономики и финансов: понятия маржи, EBITDA, рентабельности, оборотного капитала</li>
+        <li>Уметь визуализировать данные и строить убедительные презентации в PowerPoint для топ-менеджмента</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Python: библиотеки Pandas и NumPy для автоматизации расчётов, Matplotlib и Seaborn для визуализации</li>
+        <li>Знакомство с системами 1С или Axapta (Microsoft Dynamics) для работы с учётными данными</li>
+        <li>Участие в кейс-чемпионатах по финансам и инвестициям (CFA Institute, РБК и др.)</li>
+        <li>Базовое понимание МСФО (IFRS) или РСБУ для работы с финансовой отчётностью</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🧾</div>
+        <div><h3>Менеджер по управленческому учёту</h3><div class="sub">Отчётность · Учёт затрат · 1С</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-finance">🧾</div>
+      <p class="desc">Проводит финансовый анализ работы всей компании: учёт затрат и внутренний аудит ресурсов для выполнения финансовой стратегии.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Формировать управленческую и бухгалтерскую отчётность</li>
+        <li>Актуализировать регламенты по проверке и утверждению отчётности</li>
+        <li>Взаимодействовать со смежными подразделениями по вопросам учёта</li>
+        <li>Контролировать корректность учётных данных в системах</li>
+        <li>Анализировать структуру затрат и выявлять отклонения</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать Excel на уверенном уровне: ВПР, условные формулы, сводные таблицы, сверка данных между таблицами</li>
+        <li>Иметь базовые знания экономики и финансов: понятия себестоимости, маржи, центров затрат и доходов</li>
+        <li>Понимать принципы бухгалтерского учёта: двойная запись, план счетов, базовые проводки</li>
+        <li>Уметь работать с большими массивами данных и сверять данные из разных источников</li>
+        <li>Строить отчёты и презентовать результаты в PowerPoint для руководства</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знание OLAP-кубов в Excel для многомерного анализа данных по нескольким разрезам</li>
+        <li>Базовое знание 1С: Бухгалтерия или Axapta (Microsoft Dynamics) для формирования отчётов</li>
+        <li>Понимание принципов МСФО (IFRS) или РСБУ</li>
+        <li>Курсы по управленческому учёту или подготовка к CIMA/ACCA</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🏛️</div>
+        <div><h3>Менеджер по налогам</h3><div class="sub">Налоговая отчётность · ФНС · Регламенты</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-finance">🏛️</div>
+      <p class="desc">Контролирует налоговый и финансовый учёт компании — незаменимое звено в экономическом процессе принятия решений.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Формировать налоговую отчётность (НДС, налог на прибыль, НДФЛ)</li>
+        <li>Организовывать контроль своевременной уплаты налогов</li>
+        <li>Участвовать в регулярных сверках с ФНС и отвечать на запросы</li>
+        <li>Улучшать регламенты по проверке и утверждению отчётности</li>
+        <li>Отслеживать изменения налогового законодательства и адаптировать процессы</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, условные формулы, сводные таблицы для работы с данными по налогам</li>
+        <li>Иметь базовые знания налогового права: НК РФ, основные виды налогов (НДС, налог на прибыль, НДФЛ, страховые взносы)</li>
+        <li>Понимать принципы бухгалтерского учёта и уметь читать финансовую отчётность</li>
+        <li>Уметь работать с нормативно-правовыми базами: КонсультантПлюс, Гарант</li>
+        <li>Строить презентации и отчёты в PowerPoint для руководства и аудиторов</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знание OLAP-кубов в Excel для многомерного анализа налоговых данных</li>
+        <li>Базовое знание 1С: Бухгалтерия или Axapta для формирования налоговых деклараций</li>
+        <li>Понимание трансфертного ценообразования и международного налогообложения</li>
+        <li>Участие в олимпиадах по налогам или налоговым кейс-чемпионатам</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== МАРКЕТИНГ ===================== -->
+<div class="track-section" id="track-marketing">
+  <div class="track-heading">Трек «Маркетинг»<span>6 профессий · от трейда до event-менеджмента</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🛍️</div>
+        <div><h3>Трейд-маркетолог</h3><div class="sub">Поставщики · Промо · Переговоры</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">🛍️</div>
+      <p class="desc">Чёрная пятница — его профессиональный праздник. Работает с крупными поставщиками, наращивает объёмы продаж и повышает их лояльность к платформе.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Вести переговоры с поставщиками и подбирать форматы рекламного размещения</li>
+        <li>Делать презентации к тематическим промо (НГ, Чёрная пятница, 8 марта)</li>
+        <li>Вести маркетинговый календарь и оценивать эффективность акций</li>
+        <li>Координировать промо-активности и следить за сроками и качеством</li>
+        <li>Формулировать задачи командам аналитики, SMM и разработки</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, условные формулы и сводные таблицы — для анализа продаж и эффективности промо</li>
+        <li>Уметь визуализировать данные и строить убедительные презентации в PowerPoint для поставщиков и руководства</li>
+        <li>Знать базовые метрики маркетинга: CTR, ER, ROI, GMV, конверсия воронки продаж</li>
+        <li>Понимать механику промо-акций: скидки, кешбэк, bundling, cross-sell — как они влияют на продажи</li>
+        <li>Иметь навыки деловой коммуникации и переговоров с партнёрами</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт составления ТЗ для дизайнеров и разработчиков под промо-механики</li>
+        <li>Понимание принципов ценообразования и акционной математики</li>
+        <li>Участие в кейс-чемпионатах по маркетингу или FMCG</li>
+        <li>Базовое знание SQL для самостоятельной выгрузки данных по продажам</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📢</div>
+        <div><h3>Промо-маркетолог</h3><div class="sub">Рекламные кампании · Email · Push</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">📢</div>
+      <p class="desc">Меньше работает с поставщиками, зато больше — непосредственно над промо-акциями и рекламными кампаниями для пользователей.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Готовить промо-акции товаров на основе аналитики и сезонности</li>
+        <li>Запускать и мониторить рекламные кампании в рекламных системах</li>
+        <li>Анализировать трафик, финансовые показатели и KPI кампаний</li>
+        <li>Настраивать email-рассылки и push-уведомления</li>
+        <li>Ставить задачи на дизайн и вёрстку промо-страниц и баннеров</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, условные формулы, сводные таблицы для анализа результатов кампаний</li>
+        <li>Уметь работать с метриками рекламных кампаний: CTR, CPC, CPM, ER, ROAS, ROI — и понимать, как их улучшать</li>
+        <li>Уметь визуализировать данные и строить отчёты по кампаниям в PowerPoint</li>
+        <li>Иметь базовое понимание digital-каналов: контекстная реклама, таргет, email, push, SEO</li>
+        <li>Уметь составлять ТЗ для дизайнеров и формулировать задачи смежным командам</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Навыки работы с текстом: написание промо-описаний, заголовков, call-to-action для рекламных материалов</li>
+        <li>Знакомство со спецификой каналов коммуникации: SMM, контекст, мобайл, ТВ, OLV, digital-баннеры</li>
+        <li>Базовый опыт работы с рекламными кабинетами (VK Ads, Яндекс Директ и др.)</li>
+        <li>Участие в кейс-чемпионатах по маркетингу</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">⚙️</div>
+        <div><h3>Операционный маркетолог</h3><div class="sub">Процессы · Дашборды · Бюджет · Эффективность</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">⚙️</div>
+      <p class="desc">Обеспечивает бесперебойную работу всей маркетинговой машины: процессы, бюджеты, дедлайны и операционная эффективность команды — всё на нём.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Координировать внутренние процессы маркетинговой команды</li>
+        <li>Вести бюджет маркетинга и контролировать расходы по статьям</li>
+        <li>Строить дашборды для мониторинга эффективности кампаний</li>
+        <li>Автоматизировать рутинные отчёты и упрощать процессы</li>
+        <li>Взаимодействовать с подрядчиками и агентствами</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: сводные таблицы, OLAP, формулы для работы с бюджетом и отчётностью</li>
+        <li>Уметь строить отчёты и презентации в PowerPoint: еженедельные дайджесты, статус-апдейты для руководства</li>
+        <li>Понимать принципы управления проектами: декомпозиция задач, планирование, контроль дедлайнов</li>
+        <li>Иметь навыки работы с подрядчиками: постановка задач, контроль качества и сроков, согласование актов</li>
+        <li>Знать базовые метрики маркетинга для оценки эффективности кампаний</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с Tableau или PowerBI для построения интерактивных дашбордов</li>
+        <li>Знание Jira, Notion или других таск-менеджеров для управления задачами команды</li>
+        <li>Базовый SQL для самостоятельной выгрузки данных из базы</li>
+        <li>Опыт автоматизации отчётов с помощью Google Sheets / Excel макросов</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🔭</div>
+        <div><h3>Маркетинговый исследователь</h3><div class="sub">Анализ рынка · Опросы · Инсайты</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">🔭</div>
+      <p class="desc">Изучает рынок, конкурентов и потребителей — добывает инсайты, на которых строятся маркетинговые стратегии и продуктовые решения.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Проводить количественные опросы и анализировать результаты</li>
+        <li>Мониторить рыночные тренды и отчёты отраслевых агентств (Nielsen, GfK и др.)</li>
+        <li>Анализировать конкурентный ландшафт и позиционирование игроков рынка</li>
+        <li>Готовить аналитические отчёты и рекомендации для маркетинга и продукта</li>
+        <li>Работать с внешними исследовательскими агентствами и контролировать качество</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать Excel на уверенном уровне: сводные таблицы, диаграммы, обработка данных опросов</li>
+        <li>Понимать методологию маркетинговых исследований: качественные (интервью, фокус-группы) и количественные (опросы, тесты) методы</li>
+        <li>Уметь писать анкеты и гайды для исследований, правильно формулировать вопросы</li>
+        <li>Строить убедительные аналитические отчёты и презентации в PowerPoint с выводами и рекомендациями</li>
+        <li>Иметь базовые знания статистики: средние, медиана, дисперсия, корреляция, значимость различий</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знакомство с SPSS или R для обработки данных опросов и статистического анализа</li>
+        <li>Опыт работы с онлайн-платформами для опросов: SurveyMonkey, Яндекс Взгляд, Typeform</li>
+        <li>Участие в кейс-чемпионатах по маркетингу или исследованиям рынка</li>
+        <li>Знание фреймворков сегментации: RFM-анализ, Customer Persona, Jobs To Be Done</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📱</div>
+        <div><h3>Продуктовый маркетолог</h3><div class="sub">Go-to-market · Позиционирование · Рост</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">📱</div>
+      <p class="desc">Связывает продукт и рынок: отвечает за позиционирование, запуск новых фич и рост аудитории через маркетинговые инструменты.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать go-to-market стратегии для новых продуктов и фич</li>
+        <li>Формулировать позиционирование и ценностное предложение (value proposition)</li>
+        <li>Запускать коммуникационные кампании к продуктовым релизам</li>
+        <li>Анализировать эффективность маркетинговых каналов и точек роста</li>
+        <li>Проводить конкурентный анализ и сегментацию целевой аудитории</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, сводные таблицы для анализа данных по аудитории и каналам</li>
+        <li>Уметь строить убедительные презентации в PowerPoint: запуск продукта, отчёт по кампании, стратегия</li>
+        <li>Понимать основы маркетинга: сегментация (STP), воронка AARRR, unit-экономика, LTV vs CAC</li>
+        <li>Уметь формулировать сообщения для разных аудиторий: пользователи, бизнес, СМИ</li>
+        <li>Понимать продукт изнутри: как работают фичи, что ценят пользователи, какие метрики важны</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Базовый SQL для самостоятельного анализа данных по аудитории и поведению пользователей</li>
+        <li>Понимание UX и умение читать прототипы в Figma</li>
+        <li>Опыт запуска собственного продукта, телеграм-канала или стартап-проекта</li>
+        <li>Участие в кейс-чемпионатах по продукту или маркетингу</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🎪</div>
+        <div><h3>Event-менеджер</h3><div class="sub">Мероприятия · Подрядчики · Бюджет</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-marketing">🎪</div>
+      <p class="desc">Создаёт события, которые запоминаются: от внутренних корпоративов до масштабных публичных конференций и партнёрских мероприятий.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Планировать и координировать мероприятия от идеи до реализации и разбора</li>
+        <li>Вести бюджет мероприятия и контролировать расходы по статьям</li>
+        <li>Выбирать площадки и подрядчиков, вести переговоры об условиях</li>
+        <li>Координировать команду, волонтёров и следить за дедлайнами</li>
+        <li>Анализировать эффективность мероприятий и собирать обратную связь</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, сводные таблицы для ведения бюджета, списков гостей и чек-листов</li>
+        <li>Уметь строить презентации в PowerPoint: концепция мероприятия, отчёт по итогам, питч для руководства</li>
+        <li>Иметь навыки управления проектами: декомпозиция, таймлайн, управление рисками и планом «Б»</li>
+        <li>Уметь вести переговоры с площадками, кейтерингом, техническими подрядчиками</li>
+        <li>Обладать высокой стрессоустойчивостью и умением решать проблемы в режиме реального времени</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт организации мероприятий: студенческие конференции, хакатоны, корпоративы, митапы</li>
+        <li>Знание таск-менеджеров: Jira, Notion, Trello для управления задачами команды</li>
+        <li>Понимание digital-инструментов для продвижения мероприятий: email, соцсети, лендинги</li>
+        <li>Навыки переговоров и работа со спонсорами мероприятий</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== СТРАТЕГИЯ ===================== -->
+<div class="track-section" id="track-strategy">
+  <div class="track-heading">Трек «Стратегия»<span>2 профессии · Анализ и развитие бизнеса</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">♟️</div>
+        <div><h3>Стратегический аналитик</h3><div class="sub">SWOT · Рынки · Модели · Топ-менеджмент</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-strategy">♟️</div>
+      <p class="desc">Помогает компании смотреть на несколько шагов вперёд: исследует рынки, конкурентов и тренды, строит долгосрочные планы для топ-менеджмента.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Проводить анализ рынка и конкурентной среды (SWOT, PESTEL, 5 сил Портера)</li>
+        <li>Строить финансовые и рыночные модели для оценки новых направлений</li>
+        <li>Готовить аналитические материалы и презентации для топ-менеджмента</li>
+        <li>Участвовать в разработке стратегии развития на 3–5 лет</li>
+        <li>Мониторить отраслевые тренды, бенчмарки и лучшие практики</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: финансовое моделирование, сценарный анализ, OLAP-кубы, работа с большими массивами данных</li>
+        <li>Уметь строить убедительные презентации в PowerPoint в консалтинговом стиле: чёткая структура, сторителлинг, выводы на первом слайде</li>
+        <li>Знать и применять стратегические фреймворки: SWOT, PESTEL, BCG-матрица, 5 сил Портера, Value Chain</li>
+        <li>Уметь структурировать проблему и строить гипотезы (Issue Tree, MECE)</li>
+        <li>Понимать основы корпоративных финансов: DCF, NPV, IRR, мультипликаторы оценки</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Базовый Python для автоматизации сбора и анализа данных о рынке</li>
+        <li>Английский язык на уровне чтения аналитики и общения с зарубежными коллегами</li>
+        <li>Участие в кейс-чемпионатах: BCG Gamma, Strategy&, Changellenge Cup Russia</li>
+        <li>Стажировка в консалтинговой компании или стратегическом подразделении</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🌐</div>
+        <div><h3>Менеджер по развитию бизнеса</h3><div class="sub">Партнёрства · M&A · Новые рынки</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-strategy">🌐</div>
+      <p class="desc">Ищет новые точки роста: рынки, партнёрства, бизнес-модели. Работает на стыке аналитики, переговоров и стратегии.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Искать новые партнёрства и возможности для joint ventures или M&A</li>
+        <li>Готовить бизнес-кейсы для запуска новых направлений с обоснованием ROI</li>
+        <li>Проводить переговоры с потенциальными партнёрами на разных уровнях</li>
+        <li>Оценивать рыночный потенциал новых продуктов и регионов</li>
+        <li>Координировать кросс-функциональные рабочие группы по новым инициативам</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: финансовое моделирование, оценка рыночного потенциала, сценарный анализ</li>
+        <li>Строить убедительные презентации в PowerPoint: питч для руководства, презентация для партнёра, бизнес-кейс</li>
+        <li>Иметь развитые переговорные навыки: умение слушать, находить win-win, работать с возражениями</li>
+        <li>Понимать корпоративные финансы: оценка компаний, структура сделок, due diligence</li>
+        <li>Уметь быстро разбираться в новых рынках и отраслях — собирать информацию, структурировать, делать выводы</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт в консалтинге или инвестиционном банкинге — понимание сделок и корпоративных процессов</li>
+        <li>Английский язык на уровне ведения переговоров и презентаций</li>
+        <li>Участие в кейс-чемпионатах по стратегии и развитию бизнеса</li>
+        <li>Знание CRM-систем и воронки партнёрских продаж</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== КОНСАЛТИНГ ===================== -->
+<div class="track-section" id="track-consulting">
+  <div class="track-heading">Трек «Консалтинг»<span>2 профессии · Стратегия и операции</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">💡</div>
+        <div><h3>Внутренний консультант</h3><div class="sub">MECE · Issue Tree · Стейкхолдеры</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-consulting">💡</div>
+      <p class="desc">«Встроенный McKinsey» компании: работает с разными бизнес-юнитами, решая сложные задачи с помощью структурного мышления и данных.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Диагностировать проблемы в бизнес-процессах и предлагать структурированные решения</li>
+        <li>Структурировать задачи с помощью консалтинговых фреймворков (MECE, Issue Tree, 5 Why)</li>
+        <li>Готовить аналитические презентации для топ-менеджмента в консалтинговом стиле</li>
+        <li>Управлять проектными командами и дедлайнами в условиях неопределённости</li>
+        <li>Собирать данные через интервью, воркшопы и анализ документов</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: финансовое моделирование, работа с большими массивами, сценарный анализ</li>
+        <li>Строить презентации в консалтинговом стиле (PowerPoint): pyramid principle, SCR-структура, один вывод на слайде</li>
+        <li>Владеть структурным мышлением: декомпозиция проблем, MECE, Issue Tree, гипотезо-ориентированный подход</li>
+        <li>Уметь работать со стейкхолдерами: проводить интервью, фасилитировать воркшопы, управлять ожиданиями</li>
+        <li>Понимать основы корпоративных финансов для оценки эффекта от рекомендаций</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Участие в кейс-чемпионатах: BCG, McKinsey, Changellenge — лучшая подготовка к консалтинговым интервью</li>
+        <li>Английский язык на уровне написания отчётов и общения с иностранными коллегами</li>
+        <li>Стажировка в консалтинговой компании (Big4, стратегические бутики)</li>
+        <li>Базовый SQL для самостоятельной работы с данными без привлечения аналитиков</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🔧</div>
+        <div><h3>Операционный консультант</h3><div class="sub">Lean · 6 Sigma · KPI · Оптимизация</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-consulting">🔧</div>
+      <p class="desc">Находит узкие места в логистике, складах, закупках и предлагает, как сделать процессы быстрее и дешевле с помощью Lean и данных.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Картировать текущие операционные процессы и выявлять потери (Lean, 6 Sigma, VSM)</li>
+        <li>Рассчитывать экономический эффект от предлагаемых оптимизаций</li>
+        <li>Пилотировать изменения на конкретных участках и измерять результат</li>
+        <li>Готовить рекомендации и защищать их перед руководством</li>
+        <li>Разрабатывать KPI и дашборды для мониторинга операционных улучшений</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: расчёт операционных метрик, моделирование сценариев, сводные таблицы для анализа потерь</li>
+        <li>Строить убедительные презентации в PowerPoint: диагностика проблемы, рекомендации, roadmap изменений</li>
+        <li>Знать основы Lean-методологии: 7 видов потерь (muda), 5S, Kaizen, Value Stream Mapping</li>
+        <li>Уметь собирать и анализировать операционные данные: время цикла, OEE, процент брака, пропускная способность</li>
+        <li>Иметь навыки управления изменениями: работа с сопротивлением, вовлечение команды в улучшения</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Базовый SQL для самостоятельной выгрузки операционных данных</li>
+        <li>Знакомство с Tableau или PowerBI для визуализации операционных дашбордов</li>
+        <li>Сертификат Lean Six Sigma (White Belt или Yellow Belt)</li>
+        <li>Участие в кейс-чемпионатах по операционному управлению и логистике</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== ИССЛЕДОВАНИЯ ===================== -->
+<div class="track-section" id="track-research">
+  <div class="track-heading">Трек «Исследования»<span>2 профессии · UX и маркетинговые исследования</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🔍</div>
+        <div><h3>UX-исследователь</h3><div class="sub">Интервью · CJM · Юзабилити · Инсайты</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-research">🔍</div>
+      <p class="desc">Разговаривает с пользователями вместо того, чтобы угадывать их желания. Помогает продуктовым командам принимать решения, основанные на реальных инсайтах.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Проводить глубинные интервью и фокус-группы с пользователями</li>
+        <li>Проектировать сценарии и задания для юзабилити-тестирований</li>
+        <li>Составлять персоны пользователей и карты пути (CJM, JTBD)</li>
+        <li>Анализировать качественные и количественные данные исследований</li>
+        <li>Готовить инсайт-отчёты и презентовать выводы продуктовым командам</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Владеть навыками интервьюирования: активное слушание, открытые вопросы, работа с молчанием, избегание leading questions</li>
+        <li>Знать качественные методы исследований: глубинные интервью, фокус-группы, контекстуальное наблюдение, дневниковые исследования</li>
+        <li>Уметь работать с инструментами: Miro для карт и воркшопов, PowerPoint для инсайт-отчётов, Notion для документации</li>
+        <li>Понимать концепции UX: usability, accessibility, ментальные модели пользователей, Jobs To Be Done</li>
+        <li>Уметь структурировать большой объём качественных данных и выявлять паттерны и инсайты</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Базовые знания статистики для интерпретации количественных данных опросов</li>
+        <li>Опыт в психологии, социологии или когнитивных науках — отличная база для UX-исследований</li>
+        <li>Знакомство с инструментами для юзабилити-тестов: Maze, UserTesting, Lookback</li>
+        <li>Базовый SQL или Excel для работы с количественными данными поведения пользователей</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📡</div>
+        <div><h3>Маркетинговый исследователь</h3><div class="sub">Опросы · Тренды · Конкуренты · Отчёты</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-research">📡</div>
+      <p class="desc">Изучает рынок, конкурентов и потребителей для принятия обоснованных решений о продуктах, ценах и коммуникациях.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Проводить количественные опросы и обрабатывать их результаты</li>
+        <li>Мониторить рыночные тренды и отчёты отраслевых агентств</li>
+        <li>Анализировать конкурентный ландшафт и позиционирование брендов</li>
+        <li>Готовить аналитические отчёты и рекомендации для маркетинга и продукта</li>
+        <li>Работать с внешними исследовательскими агентствами и контролировать качество</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать Excel на уверенном уровне: сводные таблицы, диаграммы, обработка данных опросов, кросс-табуляция</li>
+        <li>Понимать методологию маркетинговых исследований: когда применять качественные, а когда количественные методы</li>
+        <li>Уметь писать корректные анкеты: правила формулировки вопросов, шкалы Лайкерта, семантический дифференциал</li>
+        <li>Строить убедительные отчёты в PowerPoint: executive summary, ключевые выводы, рекомендации</li>
+        <li>Иметь базовые знания статистики: средние, медиана, значимость различий (t-тест), корреляция</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знакомство с SPSS или R для профессиональной обработки данных опросов и кластерного анализа</li>
+        <li>Опыт работы с онлайн-платформами для опросов: SurveyMonkey, Яндекс Взгляд, Google Forms</li>
+        <li>Знание фреймворков сегментации: RFM-анализ, Customer Persona, VALS-сегментация</li>
+        <li>Участие в кейс-чемпионатах или курсовых по маркетинговым исследованиям</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== ЮРИСТЫ ===================== -->
+<div class="track-section" id="track-legal">
+  <div class="track-heading">Трек «Право»<span>3 профессии · Договоры, ИС и трудовое право</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📝</div>
+        <div><h3>Корпоративный юрист</h3><div class="sub">Договоры · Экспертиза · Переговоры</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-legal">📝</div>
+      <p class="desc">Обеспечивает юридическую безопасность сделок компании: проверяет, согласовывает и защищает интересы при работе с партнёрами и поставщиками.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать и согласовывать коммерческие договоры (поставка, услуги, агентирование)</li>
+        <li>Проводить правовую экспертизу документов контрагентов</li>
+        <li>Консультировать бизнес-подразделения по договорным рискам</li>
+        <li>Участвовать в переговорах с контрагентами по спорным условиям</li>
+        <li>Вести реестры договоров, контролировать сроки и пролонгации</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать гражданское право на уровне, достаточном для самостоятельной работы с договорами: ГК РФ, части 1 и 2, основные виды обязательств</li>
+        <li>Уметь проводить правовую экспертизу договоров: выявлять риски, предлагать защитные формулировки</li>
+        <li>Владеть юридической техникой: правильно формулировать условия, добиваться однозначности и полноты</li>
+        <li>Уметь работать с нормативно-правовыми базами: КонсультантПлюс, Гарант — быстро находить актуальные нормы и судебную практику</li>
+        <li>Иметь навыки деловой переписки и переговоров по правовым вопросам</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Английский язык для работы с иностранными контрагентами и договорами по английскому праву</li>
+        <li>Стажировка в юридической фирме или правовом подразделении крупной компании</li>
+        <li>Знакомство с электронными системами документооборота (1С-ДО, Directum)</li>
+        <li>Понимание специфики e-commerce: договоры с маркетплейсами, оферты, пользовательские соглашения</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">©️</div>
+        <div><h3>Юрист по интеллектуальной собственности</h3><div class="sub">Товарные знаки · Контрафакт · Роспатент</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-legal">©️</div>
+      <p class="desc">Защищает бренд и борется с контрафактом. Работает на стыке права, IT и e-commerce — одна из самых актуальных юридических специализаций.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Регистрировать товарные знаки в России и за рубежом, следить за их защитой</li>
+        <li>Обрабатывать жалобы правообладателей на нарушения на платформе</li>
+        <li>Выявлять и блокировать контрафактные товары и нарушения авторских прав</li>
+        <li>Консультировать маркетинг и продукт по вопросам авторского права и ИС</li>
+        <li>Взаимодействовать с Роспатентом, WIPO и патентными поверенными</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать законодательство об интеллектуальной собственности: Часть 4 ГК РФ — авторское право, товарные знаки, патенты, коммерческая тайна</li>
+        <li>Понимать процедуры регистрации товарных знаков в России (Роспатент) и международных системах (Madrid System, OHIM)</li>
+        <li>Уметь выявлять признаки нарушения ИС: сходство до степени смешения, плагиат, незаконное использование контента</li>
+        <li>Работать с нормативно-правовыми базами: КонсультантПлюс, Гарант, база данных Роспатента</li>
+        <li>Быть внимательным к деталям: сравнение обозначений, анализ изображений, описаний товаров</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Английский язык для работы с международными правообладателями и иностранными документами</li>
+        <li>Понимание специфики digital-среды: как работают DMCA, Right of Publicity, лицензионные соглашения на контент</li>
+        <li>Опыт взаимодействия с Роспатентом или патентными поверенными</li>
+        <li>Знакомство с технической стороной e-commerce для понимания механизмов нарушений</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">⚖️</div>
+        <div><h3>Юрист по трудовому праву</h3><div class="sub">ТК РФ · Споры · HR · ГИТ</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-legal">⚖️</div>
+      <p class="desc">Обеспечивает соответствие HR-процессов законодательству в крупной компании с тысячами сотрудников по всей стране.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать и проверять трудовые договоры, локальные нормативные акты</li>
+        <li>Консультировать HR по вопросам дисциплинарных взысканий и увольнений</li>
+        <li>Представлять интересы компании в трудовых спорах и судах</li>
+        <li>Отслеживать изменения трудового законодательства и адаптировать документы</li>
+        <li>Участвовать в проверках ГИТ, прокуратуры и других надзорных органов</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Глубоко знать ТК РФ: приём, переводы, дисциплина, увольнения, рабочее время, охрана труда, особые категории работников</li>
+        <li>Уметь разрабатывать кадровые документы: трудовые договоры, ПВТР, положения, приказы, уведомления</li>
+        <li>Знать порядок проведения дисциплинарных расследований и оформления взысканий без правовых рисков</li>
+        <li>Работать с нормативно-правовыми базами: КонсультантПлюс, Гарант — отслеживать судебную практику по трудовым спорам</li>
+        <li>Уметь готовить правовые позиции и процессуальные документы для трудовых споров</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт участия в судебных заседаниях по трудовым спорам или прохождения практики в суде</li>
+        <li>Знание специфики дистанционной работы и самозанятых: договоры ГПХ, риски переквалификации</li>
+        <li>Понимание охраны труда: специальная оценка условий труда (СОУТ), несчастные случаи, профзаболевания</li>
+        <li>Стажировка в HR-отделе крупной компании для понимания операционного контекста</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== HR ===================== -->
+<div class="track-section" id="track-hr">
+  <div class="track-heading">Трек «HR»<span>3 профессии · Партнёрство, подбор и проекты</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🤝</div>
+        <div><h3>HR Business Partner</h3><div class="sub">Орг-дизайн · Вовлечённость · Стратегия</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-hr">🤝</div>
+      <p class="desc">HRBP — стратегический партнёр бизнеса в управлении людьми: вместе с руководителями решает, как команда должна быть устроена для достижения целей.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Консультировать руководителей по вопросам управления командой и разрешения конфликтов</li>
+        <li>Участвовать в орг-дизайне: перераспределение ролей, создание новых структур</li>
+        <li>Анализировать данные о вовлечённости, текучести и производительности персонала</li>
+        <li>Разрабатывать и внедрять программы удержания ключевых сотрудников</li>
+        <li>Проводить калибровочные сессии по оценке эффективности (Performance Review)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать Excel на уровне аналитики HR-данных: текучесть, вовлечённость, стоимость найма, структура численности</li>
+        <li>Строить убедительные презентации в PowerPoint: отчёты для бизнеса, защита HR-инициатив перед руководством</li>
+        <li>Иметь базовые знания трудового права: приём, увольнение, дисциплина — для консультирования руководителей</li>
+        <li>Владеть навыками фасилитации и медиации: проведение воркшопов, работа с конфликтами в команде</li>
+        <li>Уметь работать с данными: интерпретировать результаты опросов вовлечённости, строить выводы</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с HR-аналитикой в Tableau, PowerBI или специализированных HR-системах (SAP HR, 1С:ЗУП)</li>
+        <li>Знакомство с методами оценки персонала: 360°, Assessment Center, Performance Management</li>
+        <li>Курсы по организационному дизайну или организационной психологии</li>
+        <li>Понимание Agile-подходов в HR: OKR, Holacracy, команды нового типа</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🎯</div>
+        <div><h3>Рекрутер</h3><div class="sub">Подбор · Интервью · Воронка · Оффер</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-hr">🎯</div>
+      <p class="desc">Находит лучших людей на рынке и убеждает их присоединиться к команде. Работает быстро, много общается и умеет продавать вакансию.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Формировать профиль идеального кандидата совместно с нанимающим менеджером</li>
+        <li>Вести полный цикл подбора: от поиска до подписания оффера</li>
+        <li>Проводить телефонные скрининги и структурированные интервью по компетенциям</li>
+        <li>Строить воронку подбора и анализировать конверсию на каждом этапе</li>
+        <li>Вести коммуникации с кандидатами и заботиться об их опыте (candidate experience)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Владеть навыками структурированного интервью: STAR-метод, вопросы по компетенциям, оценка мотивации и культурного фита</li>
+        <li>Знать Excel на базовом уровне: ведение таблиц с кандидатами, воронка подбора, аналитика по source of hire</li>
+        <li>Уметь работать с ATS-системами (Applicant Tracking System): HH, Huntflow, Potok и аналоги</li>
+        <li>Обладать развитыми коммуникативными навыками: умение расположить к себе кандидата, выявить его мотивацию, работать с возражениями</li>
+        <li>Понимать рынок труда: уровни зарплат, конкуренция за кандидатов, источники поиска по разным профилям</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Навыки Boolean search и X-ray поиска через Google для поиска пассивных кандидатов</li>
+        <li>Опыт работы с LinkedIn Recruiter и другими профессиональными сетями</li>
+        <li>Понимание IT-рынка: технические роли, грейды, стек технологий — для подбора технических специалистов</li>
+        <li>Опыт проведения массового подбора или работы в кадровом агентстве</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🛠️</div>
+        <div><h3>Менеджер HR-проектов</h3><div class="sub">Адаптация · Обучение · Well-being · Культура</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-hr">🛠️</div>
+      <p class="desc">Реализует HR-инициативы, которые меняют то, как люди работают в компании: от системы адаптации до программ обучения и well-being.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать и запускать программы адаптации новых сотрудников (онбординг)</li>
+        <li>Организовывать корпоративные обучения и отслеживать их эффективность (ROI обучения)</li>
+        <li>Проводить опросы вовлечённости (Employee NPS) и анализировать результаты</li>
+        <li>Управлять проектами в сфере корпоративной культуры и well-being</li>
+        <li>Координировать работу подрядчиков и внешних провайдеров обучения</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать Excel на базовом уровне: ВПР, сводные таблицы для анализа данных опросов и статистики по обучению</li>
+        <li>Строить убедительные презентации в PowerPoint: защита HR-инициатив, отчёты по обучению и вовлечённости</li>
+        <li>Иметь навыки управления проектами: декомпозиция, планирование, контроль дедлайнов, работа с подрядчиками</li>
+        <li>Уметь фасилитировать встречи и воркшопы для команд разного уровня</li>
+        <li>Понимать принципы взрослого обучения (андрагогика) и методы оценки эффективности обучения (Kirkpatrick)</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы в Jira, Notion или Trello для управления HR-проектами и документацией</li>
+        <li>Опыт организации мероприятий: корпоративы, конференции, тимбилдинги</li>
+        <li>Знакомство с LMS-платформами (iSpring, Moodle) для управления электронным обучением</li>
+        <li>Участие в кейс-чемпионатах по HR или стажировка в T&D / L&D подразделении</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== ДИЗАЙН ===================== -->
+<div class="track-section" id="track-design">
+  <div class="track-heading">Трек «Дизайн»<span>5 профессий · UX/UI, веб, мобайл, графика и motion</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🎨</div>
+        <div><h3>UX/UI-дизайнер</h3><div class="sub">Figma · Wireframes · Дизайн-система</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-design">🎨</div>
+      <p class="desc">Проектирует интерфейсы, которыми пользуются миллионы людей. Думает о пользователе, но знает, что красота — это тоже функция.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Проектировать пользовательские сценарии, флоу и wireframe'ы</li>
+        <li>Разрабатывать UI-компоненты в рамках дизайн-системы</li>
+        <li>Проводить юзабилити-тестирования и итерировать на основе результатов</li>
+        <li>Согласовывать решения с продуктом и разработкой</li>
+        <li>Готовить спецификации и redline-документацию для разработчиков</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно владеть Figma: компоненты, Auto Layout, Variants, прототипирование, работа в командном проекте</li>
+        <li>Знать принципы UX: иерархия информации, ментальные модели, принципы Нильсена, доступность (a11y)</li>
+        <li>Понимать UI-паттерны: навигация, формы, онбординг, состояния (empty, error, loading)</li>
+        <li>Уметь строить пользовательские флоу и user story maps для обсуждения с командой</li>
+        <li>Иметь портфолио с кейсами: описание задачи, процесс, решение, результат</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с дизайн-системами: создание и поддержка библиотек компонентов</li>
+        <li>Базовые знания HTML и CSS для понимания ограничений и возможностей вёрстки</li>
+        <li>Знание инструментов для UX-исследований: Maze, Hotjar, UserTesting</li>
+        <li>Участие в хакатонах по дизайну или дизайн-спринтах</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🌐</div>
+        <div><h3>Веб-дизайнер</h3><div class="sub">HTML/CSS · Лендинги · Адаптив · CMS</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-design">🌐</div>
+      <p class="desc">Создаёт визуальные решения для веб-среды: лендинги, сайты, баннеры. Понимает как дизайн, так и основы вёрстки — это делает его незаменимым в любой команде.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать дизайн лендингов и промо-страниц под маркетинговые кампании</li>
+        <li>Создавать адаптивные макеты под разные устройства (desktop, tablet, mobile)</li>
+        <li>Верстать страницы в CMS: Tilda, Webflow, WordPress</li>
+        <li>Оптимизировать изображения и элементы для быстрой загрузки</li>
+        <li>Согласовывать дизайн с маркетингом, контентом и разработкой</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно владеть Figma: создание макетов, адаптивные сетки, компоненты, экспорт для вёрстки</li>
+        <li>Знать основы HTML и CSS: понимать структуру страницы, Flexbox, Grid, медиазапросы — чтобы делать реалистичные макеты</li>
+        <li>Понимать принципы адаптивного дизайна: breakpoints, fluid-сетки, приоритизация контента для мобайла</li>
+        <li>Знать основы типографики и цветовых систем применительно к веб-среде</li>
+        <li>Иметь портфолио с примерами веб-проектов: лендинги, сайты, баннерные серии</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с no-code конструкторами: Tilda, Webflow — умение собирать страницы без программиста</li>
+        <li>Базовый JavaScript для реализации интерактивных элементов</li>
+        <li>Понимание SEO-требований к дизайну: заголовки, alt-теги, скорость загрузки</li>
+        <li>Знакомство с Google Analytics или Яндекс.Метрикой для анализа поведения пользователей</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📱</div>
+        <div><h3>Дизайнер мобильного приложения</h3><div class="sub">iOS · Android · Жесты · Компоненты</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-design">📱</div>
+      <p class="desc">Проектирует интерфейсы мобильных приложений с учётом специфики iOS и Android: жестов, нативных компонентов и ограничений экрана.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать UI для мобильных платформ (iOS и Android) с учётом их особенностей</li>
+        <li>Соблюдать гайдлайны: Apple Human Interface Guidelines и Google Material Design</li>
+        <li>Проектировать жестовую навигацию, bottom sheets, модальные окна и микровзаимодействия</li>
+        <li>Создавать и поддерживать компоненты мобильной дизайн-системы</li>
+        <li>Тестировать дизайн на реальных устройствах и вносить правки по результатам</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно владеть Figma: Auto Layout, компоненты с вариантами, прототипирование жестов и переходов</li>
+        <li>Знать гайдлайны iOS (HIG) и Android (Material Design 3): отступы, типографика, нативные паттерны</li>
+        <li>Понимать специфику мобильного UX: зоны досягаемости пальца, размеры тапабельных элементов, работа с клавиатурой</li>
+        <li>Уметь проектировать edge cases: пустые состояния, ошибки, загрузка, нет интернета</li>
+        <li>Иметь портфолио с мобильными кейсами: экраны iOS/Android с описанием UX-решений</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Навыки прототипирования в ProtoPie или Principle для сложных анимаций и микровзаимодействий</li>
+        <li>Базовое понимание Swift UI или Jetpack Compose для общего языка с разработчиками</li>
+        <li>Опыт работы с Lottie-анимациями для мобильных интерфейсов</li>
+        <li>Участие в хакатонах или конкурсах по мобильному дизайну</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">📣</div>
+        <div><h3>Коммуникационный дизайнер</h3><div class="sub">Бренд · Типографика · Визуальный язык</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-design">📣</div>
+      <p class="desc">Отвечает за то, как компания выглядит в мире: строит визуальный язык бренда и создаёт материалы для всех каналов коммуникации.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Разрабатывать и поддерживать брендбук, логотип, стайлгайд и гайдлайны</li>
+        <li>Создавать визуальные концепции для рекламных и имиджевых кампаний</li>
+        <li>Проектировать систему типографики, цветовых кодов и иконографии</li>
+        <li>Адаптировать бренд под разные форматы: digital, print, outdoor, сувенирка</li>
+        <li>Оценивать соответствие материалов партнёров и агентств бренд-стандартам</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно владеть Adobe Illustrator: работа с векторной графикой, логотипами, иллюстрациями, шрифтовыми композициями</li>
+        <li>Знать Figma на уровне, достаточном для создания брендбуков и digital-материалов</li>
+        <li>Понимать принципы типографики: шрифтовые пары, кегль, интерлиньяж, трекинг, читаемость</li>
+        <li>Знать теорию цвета: цветовые модели (RGB, CMYK, Pantone), психология цвета, цветовые схемы</li>
+        <li>Иметь портфолио с кейсами по брендингу: логотипы, брендбуки, рекламные кампании</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Adobe InDesign для создания полиграфических материалов: каталоги, брошюры, годовые отчёты</li>
+        <li>Опыт разработки брендбуков с нуля — от исследования до финального гайдлайна</li>
+        <li>Понимание специфики print-производства: допечатная подготовка, цветопроба, технические требования</li>
+        <li>Знакомство с motion-дизайном для оживления бренд-элементов в digital</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🎬</div>
+        <div><h3>Motion-дизайнер</h3><div class="sub">After Effects · Анимация · Промо-видео</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-design">🎬</div>
+      <p class="desc">Оживляет интерфейсы и маркетинговые материалы: делает микроанимации, промо-ролики и интерактивные элементы, которые делают продукт запоминающимся.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Создавать микроанимации для интерфейсных элементов (кнопки, переходы, лоадеры)</li>
+        <li>Делать промо-видео и explainer-ролики для маркетинговых кампаний</li>
+        <li>Разрабатывать анимированные сторис и баннеры для digital-каналов</li>
+        <li>Экспортировать анимации в Lottie-формате для использования в приложениях</li>
+        <li>Взаимодействовать с UI-дизайнерами и разработчиками по техническим требованиям</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Уверенно владеть Adobe After Effects: кейфреймы, easing, маски, track mattes, expressions для автоматизации</li>
+        <li>Понимать принципы анимации: 12 принципов Disney (anticipation, squash & stretch, follow through и др.)</li>
+        <li>Знать Figma на базовом уровне: работа с компонентами, экспорт ассетов для анимации</li>
+        <li>Уметь работать с Adobe Illustrator или Photoshop для подготовки статичных ассетов</li>
+        <li>Иметь портфолио с анимационными кейсами: UI-анимации, промо-ролики, брендовые заставки</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Знание Lottie и Rive для интеграции анимаций напрямую в мобильные и веб-приложения</li>
+        <li>Основы 3D: Cinema 4D или Blender для создания объёмных элементов в роликах</li>
+        <li>Знание Adobe Premiere Pro для монтажа видеороликов с озвучкой и музыкой</li>
+        <li>Понимание технических ограничений при экспорте анимаций для web и mobile</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== КОММЕРЦИЯ ===================== -->
+<div class="track-section" id="track-commerce">
+  <div class="track-heading">Трек «Коммерция»<span>4 профессии · Категории, продавцы, цены и логистика</span></div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🛒</div>
+        <div><h3>Категорийный менеджер</h3><div class="sub">Ассортимент · Цены · Переговоры · Промо</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-commerce">🛒</div>
+      <p class="desc">Отвечает за свою категорию товаров как за отдельный бизнес: следит за ассортиментом, ценами, продавцами и конкурентами. Это мини-CEO своего рынка.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Анализировать динамику продаж, долю рынка и ключевые метрики категории</li>
+        <li>Привлекать новых продавцов в категорию и развивать существующих</li>
+        <li>Формировать ценовую и ассортиментную политику категории</li>
+        <li>Проводить переговоры с поставщиками по условиям сотрудничества</li>
+        <li>Запускать акции и промо-механики для роста категории</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: сводные таблицы, OLAP-кубы, ВПР, анализ данных по продажам и ценам</li>
+        <li>Знать базовый SQL для самостоятельного получения данных по категории из базы</li>
+        <li>Иметь навыки переговоров: подготовка к переговорам, работа с возражениями, win-win решения</li>
+        <li>Строить убедительные презентации в PowerPoint для поставщиков и внутреннего руководства</li>
+        <li>Понимать unit-экономику: маржинальность, оборачиваемость, GMV, take rate, стоимость привлечения</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Опыт работы с Tableau или PowerBI для визуализации данных по категории</li>
+        <li>Понимание специфики e-commerce: алгоритмы ранжирования, SEO карточек, рейтинг продавца</li>
+        <li>Участие в кейс-чемпионатах по коммерции, FMCG или retail</li>
+        <li>Базовый Python для автоматизации анализа данных по категории</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🤝</div>
+        <div><h3>Менеджер по работе с продавцами</h3><div class="sub">Онбординг · Рост · Консультации</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-commerce">🤝</div>
+      <p class="desc">Строит долгосрочные отношения с продавцами маркетплейса: помогает им расти, решает проблемы и увеличивает их товарооборот на платформе.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Консультировать продавцов по всем инструментам и возможностям платформы</li>
+        <li>Анализировать показатели продавца и предлагать конкретные точки роста</li>
+        <li>Помогать с подключением к рекламным инструментам и продвижением</li>
+        <li>Проводить обучающие вебинары и onboarding-сессии для продавцов</li>
+        <li>Собирать систематическую обратную связь и передавать её продуктовым командам</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Знать базовый Excel: ВПР, сводные таблицы для анализа показателей продавцов</li>
+        <li>Иметь развитые коммуникативные навыки: умение объяснять сложное простым языком, работать с возражениями, выстраивать доверие</li>
+        <li>Обладать аналитическим мышлением: видеть в цифрах проблемы и возможности, предлагать конкретные действия</li>
+        <li>Понимать основные метрики продавца на маркетплейсе: оборот, конверсия, рейтинг, возвраты, рекламный ROAS</li>
+        <li>Уметь проводить презентации и обучающие сессии для аудитории с разным уровнем подготовки</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Понимание специфики e-commerce и маркетплейсов: как работают алгоритмы, рекламные форматы, логистика</li>
+        <li>Базовый SQL для самостоятельного анализа данных по продавцам</li>
+        <li>Опыт в продажах, клиентском сервисе или account management</li>
+        <li>Знакомство с CRM-системами для управления базой продавцов и историей коммуникаций</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">💲</div>
+        <div><h3>Менеджер по ценообразованию</h3><div class="sub">Эластичность · Маржа · Модели · Данные</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-commerce">💲</div>
+      <p class="desc">Следит за тем, чтобы цены были конкурентными, маржинальными и привлекательными для покупателя одновременно. Работает с большими данными и строит модели.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Мониторить ценовую динамику в категориях и у конкурентов</li>
+        <li>Строить модели ценообразования с учётом эластичности спроса</li>
+        <li>Анализировать влияние ценовых изменений на выручку, маржу и конверсию</li>
+        <li>Разрабатывать алгоритмы и правила автоматического ценообразования</li>
+        <li>Готовить аналитические рекомендации и защищать их перед руководством</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: финансовые функции, моделирование сценариев, OLAP-кубы для анализа цен в разрезах</li>
+        <li>Знать SQL на уровне агрегатных функций: GROUP BY, оконные функции для анализа ценовых данных в разрезе категорий</li>
+        <li>Понимать экономику ценообразования: эластичность спроса, ценовые стратегии (penetration, skimming, value-based)</li>
+        <li>Уметь строить финансовые модели: P&L по категории, влияние скидки на маржу и оборот</li>
+        <li>Строить убедительные презентации в PowerPoint для защиты ценовых решений</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Python: Pandas для работы с большими ценовыми данными, Matplotlib для визуализации ценовых трендов</li>
+        <li>Опыт работы с Tableau или PowerBI для создания ценовых дашбордов</li>
+        <li>Понимание алгоритмического ценообразования и динамического прайсинга</li>
+        <li>Участие в кейс-чемпионатах по коммерции или финансам</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggle(this)">
+      <div class="accordion-header-left">
+        <div class="acc-emoji">🚚</div>
+        <div><h3>Менеджер по логистике</h3><div class="sub">Доставка · Подрядчики · Supply Chain</div></div>
+      </div>
+      <div class="accordion-icon">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div class="divider-top"></div>
+      <div class="illustration ill-commerce">🚚</div>
+      <p class="desc">Обеспечивает, чтобы миллионы заказов доезжали до покупателей вовремя и с минимальными затратами. Работает на стыке операций, данных и переговоров.</p>
+      <div class="section-label">Примеры задач</div>
+      <ul class="task-list">
+        <li>Анализировать операционные показатели логистических партнёров (SLA, процент брака, NPS)</li>
+        <li>Оптимизировать маршруты и стоимость доставки по регионам</li>
+        <li>Вести переговоры с транспортными компаниями по тарифам и условиям</li>
+        <li>Участвовать в запуске новых логистических направлений и сервисов</li>
+        <li>Готовить регулярные отчёты по качеству сервиса доставки для руководства</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="section-label">Для этого нужно</div>
+      <ul class="skills-list">
+        <li>Продвинуто знать Excel: сводные таблицы, работа с большими массивами операционных данных, расчёт KPI</li>
+        <li>Строить убедительные презентации в PowerPoint: операционные отчёты, защита инициатив по оптимизации</li>
+        <li>Иметь аналитическое мышление: выявление корневых причин проблем, анализ причинно-следственных связей</li>
+        <li>Уметь вести переговоры с подрядчиками: понимать структуру затрат логистических компаний, работать с тарифными книгами</li>
+        <li>Понимать базовые принципы логистики: last mile, fulfillment, cross-docking, SLA, NPS курьерской службы</li>
+      </ul>
+      <div class="section-label plus-label">Будет плюсом</div>
+      <ul class="skills-list plus">
+        <li>Базовый SQL для самостоятельной выгрузки операционных данных и анализа без помощи аналитика</li>
+        <li>Знание основ Supply Chain Management: планирование запасов, ABC-анализ, управление цепочкой поставок</li>
+        <li>Опыт работы с TMS-системами (Transport Management System)</li>
+        <li>Участие в кейс-чемпионатах по логистике или операционному управлению</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Навигатор карьеры · Найди своё направление</div>
+
+<script>
+  function toggle(header) {
+    const item = header.parentElement;
+    const wasOpen = item.classList.contains('open');
+    const section = item.closest('.track-section');
+    section.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  function showTrack(id, btn) {
+    document.querySelectorAll('.track-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('track-' + id).classList.add('active');
+    document.querySelectorAll('.track-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+  }
+</script>
+
+</body>
+</html>
